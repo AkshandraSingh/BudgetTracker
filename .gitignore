@@ -1,0 +1,4 @@
+\.env
+\budgetenv
+\node_modules
+\package-lock-json
