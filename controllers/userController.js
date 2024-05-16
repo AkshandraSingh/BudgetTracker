@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 const userModel = require('../models/userModel')
+const emailService = require('../services/emailService')
 
 module.exports = {
     //? Register User API 🍎
@@ -72,6 +73,35 @@ module.exports = {
                     message: "User email/phone or password is incorrect"
                 })
             }
+        } catch (error) {
+            res.status(500).send({
+                success: true,
+                message: "Server error!",
+                error: error.message,
+            })
+        }
+    },
+
+    //? Forget Password ✨
+    forgetPassword: async (req, res) => {
+        try {
+            const { userEmail } = req.body
+            const userData = await userModel.findOne({
+                userEmail: userEmail
+            })
+            if (!userData) {
+                return res.status(404).send({
+                    success: false,
+                    message: "User not found"
+                })
+            }
+            const token = jwt.sign({ userData }, process.env.SECRET_KEY, { expiresIn: '1h' });
+            await emailService.sendEmail(userEmail)
+            return res.status(200).send({
+                success: true,
+                message: "Email sent successfully!",
+                token: token,
+            })
         } catch (error) {
             res.status(500).send({
                 success: true,
