@@ -161,4 +161,53 @@ module.exports = {
             });
         }
     },
+
+    //? Set New Password API 🐘
+    setNewPassword: async (req, res) => {
+        let isPasswordExist = false
+        try {
+            const { oldPassword, newPassword, confirmPassword } = req.body
+            const { userId } = req.params
+            const userData = await userModel.findById(userId)
+            const isCorrectPassword = await bcrypt.compare(oldPassword, userData.userPassword)
+            if (!isCorrectPassword) {
+                return res.status(401).send({
+                    success: false,
+                    message: "Old password is incorrect"
+                })
+            }
+            if (newPassword != confirmPassword) {
+                return res.status(401).send({
+                    success: false,
+                    message: "New password or confirm password is incorrect"
+                })
+            }
+            for (const oldPassword of userData.userPreviousPasswords) {
+                if (await bcrypt.compare(newPassword, oldPassword)) {
+                    isPasswordExist = true;
+                    break;
+                }
+            }
+            if (isPasswordExist) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Don't use old passwords, try another password",
+                });
+            }
+            const bcryptPassword = await bcrypt.hash(newPassword, 10)
+            userData.userPassword = bcryptPassword
+            userData.userPreviousPasswords.push(bcryptPassword)
+            await userData.save();
+            res.status(201).json({
+                success: true,
+                message: "Password Updated",
+            });
+        } catch (error) {
+            res.status(500).send({
+                success: false,
+                message: "Error",
+                error: error.message
+            });
+        }
+    }
 }
