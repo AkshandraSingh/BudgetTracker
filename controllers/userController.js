@@ -110,4 +110,55 @@ module.exports = {
             })
         }
     },
+
+    //? Reset Password API 🦕
+    resetPassword: async (req, res) => {
+        let isPasswordExist = false
+        try {
+            const { newPassword, confirmPassword } = req.body
+            const { userId, token } = req.params
+            const isTokenCorrect = jwt.verify(token, process.env.SECRET_KEY);
+            if (isTokenCorrect) {
+                if (newPassword === confirmPassword) {
+                    const userData = await userModel.findById(userId)
+                    for (const oldPassword of userData.userPreviousPasswords) {
+                        if (await bcrypt.compare(newPassword, oldPassword)) {
+                            isPasswordExist = true;
+                            break;
+                        }
+                    }
+                    if (isPasswordExist) {
+                        return res.status(401).json({
+                            success: false,
+                            message: "Don't use old passwords, try another password",
+                        });
+                    }
+                    const bcryptPassword = await bcrypt.hash(newPassword, 10)
+                    userData.userPassword = bcryptPassword
+                    userData.userPreviousPasswords.push(bcryptPassword)
+                    await userData.save();
+                    res.status(201).json({
+                        success: true,
+                        message: "Password Updated",
+                    });
+                } else {
+                    res.status(401).send({
+                        success: false,
+                        message: "New password or confirm password is incorrect"
+                    })
+                }
+            } else {
+                res.status(401).send({
+                    success: false,
+                    message: "Token is incorrect or expire"
+                })
+            }
+        } catch (error) {
+            res.status(500).send({
+                success: false,
+                message: "Error",
+                error: error.message
+            });
+        }
+    },
 }
