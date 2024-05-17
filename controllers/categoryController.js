@@ -85,5 +85,24 @@ module.exports = {
                 error: error.message,
             })
         }
-    }
+    },
+
+    //? Delete Category API 💀
+    deleteCategory: async (req, res) => {
+        try {
+            const { categoryId } = req.params
+            const deletedCategory = await categoryModel.findByIdAndDelete(categoryId)
+            res.status(202).send({
+                success: true,
+                message: "Category Deleted Successfully!",
+                deletedCategory: deletedCategory
+            })
+        } catch (error) {
+            res.status(500).send({
+                success: true,
+                message: "Error Occurs!",
+                error: error.message,
+            })
+        }
+    },
 }
