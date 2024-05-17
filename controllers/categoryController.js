@@ -105,4 +105,29 @@ module.exports = {
             })
         }
     },
+
+    //? View all categories API 👀
+    viewAllCategories: async (req, res) => {
+        try {
+            const { userId } = req.params
+            const allCategories = await categoryModel.find({ userId: userId }).select("categoryName categoryBalance")
+            if (allCategories.length <= 0) {
+                return res.status(404).send({
+                    success: false,
+                    message: "No Category Found!"
+                })
+            }
+            res.status(202).send({
+                success: true,
+                message: "All Categories",
+                allCategories: allCategories
+            })
+        } catch (error) {
+            res.status(500).send({
+                success: true,
+                message: "Error Occurs!",
+                error: error.message,
+            })
+        }
+    },
 }
