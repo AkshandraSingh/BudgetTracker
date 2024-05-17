@@ -96,7 +96,7 @@ module.exports = {
                 })
             }
             const token = jwt.sign({ userData }, process.env.SECRET_KEY, { expiresIn: '1h' });
-            await emailService.sendEmail(userEmail)
+            await emailService.sendEmail(userEmail, "forgetPassword")
             return res.status(200).send({
                 success: true,
                 message: "Email sent successfully!",
