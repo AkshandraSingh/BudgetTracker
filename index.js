@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 
 require('./config/modelConfig')
+require('./cron/categoryBalanceJob')
 const commonRouter = require('./urls')
 
 const app = express()
