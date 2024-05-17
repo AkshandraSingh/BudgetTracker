@@ -106,7 +106,7 @@ module.exports = {
         }
     },
 
-    //? View all categories API 👀
+    //? View All Categories API 👀
     viewAllCategories: async (req, res) => {
         try {
             const { userId } = req.params
@@ -121,6 +121,25 @@ module.exports = {
                 success: true,
                 message: "All Categories",
                 allCategories: allCategories
+            })
+        } catch (error) {
+            res.status(500).send({
+                success: true,
+                message: "Error Occurs!",
+                error: error.message,
+            })
+        }
+    },
+
+    //? View Category API 🍎
+    viewCategory: async (req, res) => {
+        try {
+            const { categoryId } = req.params
+            const categoryData = await categoryModel.findById(categoryId)
+            res.status(202).send({
+                success: true,
+                message: "Category Data!",
+                categoryData: categoryData
             })
         } catch (error) {
             res.status(500).send({
