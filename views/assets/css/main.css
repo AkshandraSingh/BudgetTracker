@@ -245,7 +245,7 @@ header {
 }
 
 .hero__description {
-  font-family: "Reddit Sans", sans-serif;
+  font-family: "Raleway", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
   font-size: 1.8rem;
@@ -339,6 +339,9 @@ header {
 }
 
 .opportunities__description {
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
   margin-top: 2.5rem;
   font-size: 1.8rem;
   font-weight: 400;
@@ -386,6 +389,9 @@ header {
 }
 
 .opportunity__description {
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
   font-size: 1.6rem;
   font-weight: 400;
   color: #263238;
@@ -406,6 +412,10 @@ header {
 }
 
 .invest__description {
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 450;
+  font-style: normal;
   margin-top: 1.5rem;
   color: #324148;
   font-size: 1.8rem;
@@ -459,12 +469,19 @@ header {
 }
 
 .invest__item_description {
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: bold;
+  font-style: normal;
   font-size: 1.6rem;
   color: #ffffff;
   max-width: 30rem;
 }
 
 .btn__invest {
+  font-family: "Poetsen One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
   color: #66bb6a;
   display: inline-block;
   width: 20rem;
@@ -773,6 +790,9 @@ header {
 }
 
 .farm-invest__title {
+  font-family: "Poetsen One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
   font-size: 3.6rem;
 }
 
@@ -781,6 +801,9 @@ header {
 }
 
 .btn__farm--invest {
+  font-family: "Poetsen One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
   border: 1px solid #66bb6a;
   color: #ffffff;
   display: inline-block;
@@ -1070,6 +1093,11 @@ header {
     align-items: center;
   }
   /*end Footer*/
+}
+
+#logo1 {
+  width: 313px;
+  height: 168px;
 }
 
 @media screen and (max-width: 500px) {
