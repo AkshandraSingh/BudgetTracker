@@ -423,11 +423,12 @@ header {
 }
 
 .invest__item:nth-child(1) {
-  background: url("../img/investments/invest-1.png") no-repeat center/cover;
+  background: url("../img/aboutUs/incomeTracking.jpg") no-repeat center/cover;
 }
 
 .invest__item:nth-child(2) {
-  background: url("../img/investments/invest-2.png") no-repeat center/cover;
+  background: url("https://images.pexels.com/photos/4386442/pexels-photo-4386442.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500")
+    no-repeat center/cover;
 }
 
 .invest__item__subtitle {
