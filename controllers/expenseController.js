@@ -37,7 +37,31 @@ module.exports = {
             res.status(202).send({
                 success: true,
                 message: "Expense Added Successfully!",
-                expenseData: expenseData
+            })
+        } catch (error) {
+            res.status(500).send({
+                success: true,
+                message: "Error Occurs!",
+                error: error.message,
+            })
+        }
+    },
+
+    deleteExpense: async (req, res) => {
+        try {
+            const { expenseId } = req.params
+            const expenseData = await expenseModel.findById(expenseId)
+            const categoryData = await categoryModel.findOne({
+                categoryName: expenseData.expenseCategory,
+                userId: expenseData.userId
+            })
+            const updateCategoryBalance = categoryData.categoryBalance + expenseData.expenseAmount
+            categoryData.categoryBalance = updateCategoryBalance
+            await expenseModel.findByIdAndDelete(expenseId)
+            await categoryData.save()
+            res.status(200).send({
+                success: true,
+                message: "Expense Deleted Successfully!"
             })
         } catch (error) {
             res.status(500).send({
