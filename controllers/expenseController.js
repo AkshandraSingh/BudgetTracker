@@ -71,4 +71,24 @@ module.exports = {
             })
         }
     },
+
+    viewAllExpenses: async (req, res) => {
+        try {
+            const { userId } = req.params
+            const allExpenses = await expenseModel.find({
+                userId: userId
+            })
+            res.status(200).send({
+                success: true,
+                message: "All Expenses",
+                allExpenses: allExpenses
+            })
+        } catch (error) {
+            res.status(500).send({
+                success: true,
+                message: "Error Occurs!",
+                error: error.message,
+            })
+        }
+    }
 }

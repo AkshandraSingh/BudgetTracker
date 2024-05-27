@@ -6,5 +6,6 @@ const expenseRouter = express.Router()
 
 expenseRouter.post('/addExpense/:userId', expenseController.addExpense)
 expenseRouter.delete('/deleteExpense/:expenseId', expenseController.deleteExpense)
+expenseRouter.get('/viewAllExpenses/:userId', expenseController.viewAllExpenses)
 
 module.exports = expenseRouter
