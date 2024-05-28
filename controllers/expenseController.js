@@ -90,5 +90,40 @@ module.exports = {
                 error: error.message,
             })
         }
+    },
+
+    viewExpenseByDate: async (req, res) => {
+        try {
+            const { userId } = req.params
+            const { expenseStartDate, expenseEndDate } = req.body
+            //? Converting in date 👍🏻
+            const startDate = new Date(expenseStartDate);
+            const endDate = new Date(expenseEndDate);
+            endDate.setDate(endDate.getDate() + 1);
+            const expenseByDate = await expenseModel.find({
+                userId: userId,
+                createdAt: {
+                    $gte: startDate,
+                    $lt: endDate
+                }
+            });
+            if (expenseByDate.length <= 0) {
+                return res.status(404).send({
+                    success: false,
+                    message: "No Expense Found!"
+                })
+            }
+            res.status(200).send({
+                success: true,
+                message: "Expense By Date",
+                expenseByDate: expenseByDate
+            });
+        } catch (error) {
+            res.status(500).send({
+                success: true,
+                message: "Error Occurs!",
+                error: error.message,
+            })
+        }
     }
 }
