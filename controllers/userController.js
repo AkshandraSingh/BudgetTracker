@@ -210,4 +210,25 @@ module.exports = {
             });
         }
     },
+
+    changeProfilePic: async (req, res) => {
+        try {
+            const { userId } = req.params
+            const userProfilePic = `/upload/userProfilePics/${req.file.filename}`
+            const userData = await userModel.findById(userId)
+            userData.userProfilePic = userProfilePic
+            await userData.save()
+            res.status(200).send({
+                success: true,
+                message: "Successfully Updated Profile Pic!",
+            })
+        } catch (error) {
+            customerLogger.error(`Server Error: ${error.message}`)
+            res.status(500).send({
+                success: false,
+                message: "Server error!",
+                error: error.message,
+            })
+        }
+    },
 }

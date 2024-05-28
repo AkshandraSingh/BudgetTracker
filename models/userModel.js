@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
+    userProfilePic: {
+        type: String,
+        default: "uploads/userProfilePics/defaultProfilePic.jpg"
+    },
     isActive: {
         type: Boolean,
         default: true
