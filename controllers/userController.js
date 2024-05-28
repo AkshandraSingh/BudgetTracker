@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 
 const userModel = require('../models/userModel')
 const emailService = require('../services/emailService')
+const userLogger = require('../utils/userLogger/userLogger')
 
 module.exports = {
     //? Register User API 🍎
@@ -19,6 +20,7 @@ module.exports = {
                 userPhone: req.body.userPhone
             })
             if (isUserNameExist || isUserEmailExist || isUserPhoneExist) {
+                userLogger.error("User Name or Email or Phone Already Exist!")
                 return res.status(400).send({
                     success: false,
                     message: "User Name or Email or Phone Already Exist!",
@@ -28,12 +30,14 @@ module.exports = {
             userData.userPassword = hashedPassword
             userData.userPreviousPasswords.push(hashedPassword)
             await userData.save()
+            userLogger.info("User Created Successfully!")
             res.status(202).send({
                 success: true,
                 message: "User Created Successfully!",
                 userData: userData
             })
         } catch (error) {
+            userLogger.error(`Server Error: ${error.message}`)
             res.status(500).send({
                 success: true,
                 message: "Error Occurs!",
@@ -53,6 +57,7 @@ module.exports = {
                 userName: userAccount
             })
             if (!isUserEmail && !isUserName) {
+                userLogger.error("User Not Found!")
                 return res.status(404).send({
                     success: false,
                     message: "User not found "
@@ -62,18 +67,21 @@ module.exports = {
             const isCorrectPassword = await bcrypt.compare(userPassword, userData.userPassword)
             if (isCorrectPassword) {
                 const token = jwt.sign({ userData }, process.env.SECRET_KEY, { expiresIn: '1h' });
+                userLogger.info("Login Successfully!")
                 return res.status(200).send({
                     success: true,
                     message: "Login successfully!",
                     token: token,
                 })
             } else {
+                userLogger.error("User email/phone or password is incorrect")
                 res.status(400).send({
                     success: false,
                     message: "User email/phone or password is incorrect"
                 })
             }
         } catch (error) {
+            userLogger.error(`Server Error: ${error.message}`)
             res.status(500).send({
                 success: true,
                 message: "Server error!",
@@ -90,6 +98,7 @@ module.exports = {
                 userEmail: userEmail
             })
             if (!userData) {
+                userLogger.error('User not found')
                 return res.status(404).send({
                     success: false,
                     message: "User not found"
@@ -97,12 +106,14 @@ module.exports = {
             }
             const token = jwt.sign({ userData }, process.env.SECRET_KEY, { expiresIn: '1h' });
             await emailService.sendEmail(userEmail, "forgetPassword")
+            userLogger.info("Email sent successfully!")
             return res.status(200).send({
                 success: true,
                 message: "Email sent successfully!",
                 token: token,
             })
         } catch (error) {
+            userLogger.error(`Server Error: ${error.message}`)
             res.status(500).send({
                 success: true,
                 message: "Server error!",
@@ -128,6 +139,7 @@ module.exports = {
                         }
                     }
                     if (isPasswordExist) {
+                        userLogger.error("Don't use old passwords, try another password")
                         return res.status(401).json({
                             success: false,
                             message: "Don't use old passwords, try another password",
@@ -137,23 +149,27 @@ module.exports = {
                     userData.userPassword = bcryptPassword
                     userData.userPreviousPasswords.push(bcryptPassword)
                     await userData.save();
+                    userLogger.info("Password Updated")
                     res.status(201).json({
                         success: true,
                         message: "Password Updated",
                     });
                 } else {
+                    userLogger.error("New password or confirm password is incorrect")
                     res.status(401).send({
                         success: false,
                         message: "New password or confirm password is incorrect"
                     })
                 }
             } else {
+                userLogger.error("Token is incorrect or expire")
                 res.status(401).send({
                     success: false,
                     message: "Token is incorrect or expire"
                 })
             }
         } catch (error) {
+            userLogger.error(`Server Error: ${error.message}`)
             res.status(500).send({
                 success: false,
                 message: "Error",
@@ -171,12 +187,14 @@ module.exports = {
             const userData = await userModel.findById(userId)
             const isCorrectPassword = await bcrypt.compare(oldPassword, userData.userPassword)
             if (!isCorrectPassword) {
+                userLogger.error("Old password is incorrect")
                 return res.status(401).send({
                     success: false,
                     message: "Old password is incorrect"
                 })
             }
             if (newPassword != confirmPassword) {
+                userLogger.error("New password or confirm password is incorrect")
                 return res.status(401).send({
                     success: false,
                     message: "New password or confirm password is incorrect"
@@ -189,7 +207,8 @@ module.exports = {
                 }
             }
             if (isPasswordExist) {
-                return res.status(401).json({
+                userLogger.error("Don't use old passwords, try another password")
+                return res.status(401).send({
                     success: false,
                     message: "Don't use old passwords, try another password",
                 });
@@ -198,11 +217,13 @@ module.exports = {
             userData.userPassword = bcryptPassword
             userData.userPreviousPasswords.push(bcryptPassword)
             await userData.save();
-            res.status(201).json({
+            userLogger.info("Password Updated")
+            res.status(201).send({
                 success: true,
                 message: "Password Updated",
             });
         } catch (error) {
+            userLogger.error(`Server Error: ${error.message}`)
             res.status(500).send({
                 success: false,
                 message: "Error",
@@ -218,12 +239,13 @@ module.exports = {
             const userData = await userModel.findById(userId)
             userData.userProfilePic = userProfilePic
             await userData.save()
+            userLogger.info("Profile Pic Updated")
             res.status(200).send({
                 success: true,
                 message: "Successfully Updated Profile Pic!",
             })
         } catch (error) {
-            customerLogger.error(`Server Error: ${error.message}`)
+            userLogger.error(`Server Error: ${error.message}`)
             res.status(500).send({
                 success: false,
                 message: "Server error!",
