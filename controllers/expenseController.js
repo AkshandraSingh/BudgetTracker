@@ -2,6 +2,7 @@ const expenseModel = require('../models/expenseModel')
 const categoryModel = require('../models/categoryModel')
 const userModel = require('../models/userModel')
 const emailService = require('../services/emailService')
+const expenseLogger = require('../utils/expenseLogger/expenseLogger')
 
 module.exports = {
     addExpense: async (req, res) => {
@@ -14,12 +15,14 @@ module.exports = {
             })
             const userData = await userModel.findById(userId)
             if (!categoryData) {
+                expenseLogger.error('Category Not Found!')
                 return res.status(404).send({
                     success: false,
                     message: "Category Not Found!"
                 })
             }
             if (categoryData.categoryBalance < expenseData.expenseAmount) {
+                expenseLogger.error('Category Balance is not enough!')
                 return res.status(400).send({
                     success: false,
                     message: "Category Balance is not enough!"
@@ -34,11 +37,13 @@ module.exports = {
             categoryData.categoryBalance = realBalance
             await categoryData.save()
             await expenseData.save()
+            expenseLogger.info("Expense Added Successfully!")
             res.status(202).send({
                 success: true,
                 message: "Expense Added Successfully!",
             })
         } catch (error) {
+            expenseLogger.error(`Server Error: ${error.message}`)
             res.status(500).send({
                 success: true,
                 message: "Error Occurs!",
@@ -59,11 +64,13 @@ module.exports = {
             categoryData.categoryBalance = updateCategoryBalance
             await expenseModel.findByIdAndDelete(expenseId)
             await categoryData.save()
+            expenseLogger.info("Expense Deleted Successfully!")
             res.status(200).send({
                 success: true,
                 message: "Expense Deleted Successfully!"
             })
         } catch (error) {
+            expenseLogger.error(`Server Error: ${error.message}`)
             res.status(500).send({
                 success: true,
                 message: "Error Occurs!",
@@ -78,12 +85,14 @@ module.exports = {
             const allExpenses = await expenseModel.find({
                 userId: userId
             })
+            expenseLogger.info('All Expense Found!')
             res.status(200).send({
                 success: true,
                 message: "All Expenses",
                 allExpenses: allExpenses
             })
         } catch (error) {
+            expenseLogger.error(`Server Error: ${error.message}`)
             res.status(500).send({
                 success: true,
                 message: "Error Occurs!",
@@ -108,17 +117,20 @@ module.exports = {
                 }
             });
             if (expenseByDate.length <= 0) {
+                expenseLogger.error('No Expense Found!')
                 return res.status(404).send({
                     success: false,
                     message: "No Expense Found!"
                 })
             }
+            expenseLogger.info('Expense By Date Found!')
             res.status(200).send({
                 success: true,
                 message: "Expense By Date",
                 expenseByDate: expenseByDate
             });
         } catch (error) {
+            expenseLogger.error(`Server Error: ${error.message}`)
             res.status(500).send({
                 success: true,
                 message: "Error Occurs!",
