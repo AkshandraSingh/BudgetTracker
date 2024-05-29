@@ -1,34 +1,47 @@
 const categoryModel = require('../models/categoryModel')
+const categoryLogger = require('../utils/categoryLogger/categoryLogger')
 
 module.exports = {
     //* Add Category API 💡
     addCategory: async (req, res) => {
-        const { userId } = req.params
-        const isCategoryAlreadyExist = await categoryModel.findOne({
-            userId: userId,
-            categoryName: req.body.categoryName
-        })
-        if (isCategoryAlreadyExist) {
+        try {
+            const { userId } = req.params
+            const isCategoryAlreadyExist = await categoryModel.findOne({
+                userId: userId,
+                categoryName: req.body.categoryName
+            })
+            if (isCategoryAlreadyExist) {
+                categoryLogger.error("Category already exist!")
+                return res.status(400).send({
+                    success: false,
+                    message: "Category already exist!"
+                })
+            }
+            if (req.body.categoryLimit <= 0) {
+                categoryLogger.error("Category limit must be greater than 0")
+                return res.status(400).send({
+                    success: false,
+                    message: "Category limit must be greater than 0"
+                })
+            }
+            const categoryData = await categoryModel(req.body)
+            categoryData.categoryBalance = req.body.categoryLimit
+            categoryData.userId = userId
+            categoryData.save()
+            categoryLogger.info("Category Created Successfully!")
+            res.status(202).send({
+                success: true,
+                message: "Category Created Successfully!",
+                categoryData: categoryData
+            })
+        } catch (error) {
+            categoryLogger.error(`Error: ${error.message}`)
             return res.status(400).send({
                 success: false,
-                message: "Category already exist!"
+                message: "Error Occurs!",
+                error: error.message,
             })
         }
-        if (req.body.categoryLimit <= 0) {
-            return res.status(400).send({
-                success: false,
-                message: "Category limit must be greater than 0"
-            })
-        }
-        const categoryData = await categoryModel(req.body)
-        categoryData.categoryBalance = req.body.categoryLimit
-        categoryData.userId = userId
-        categoryData.save()
-        res.status(202).send({
-            success: true,
-            message: "Category Created Successfully!",
-            categoryData: categoryData
-        })
     },
 
     //* Edit Category API 🚀
@@ -41,12 +54,14 @@ module.exports = {
                 userId: categoryData.userId
             })
             if (isCategoryExist) {
+                categoryLogger.error('Category already exist!')
                 return res.status(400).send({
                     success: false,
                     message: "Category already exist!"
                 })
             }
             if (req.body.categoryLimit <= 0) {
+                categoryLogger.error("Category limit must be greater than 0")
                 return res.status(400).send({
                     success: false,
                     message: "Category limit must be greater than 0"
@@ -60,6 +75,7 @@ module.exports = {
                     categoryLimit: req.body.categoryLimit || undefined,
                     categoryBalance: req.body.categoryLimit,
                 }, { new: true })
+                categoryLogger.info('Category Updated Successfully!')
                 res.status(202).send({
                     success: true,
                     message: "Category Updated Successfully!",
@@ -72,6 +88,7 @@ module.exports = {
                     categoryDescription: req.body.categoryDescription || undefined,
                     categoryLimit: req.body.categoryLimit || undefined,
                 }, { new: true })
+                categoryLogger.info('Category Updated Successfully!')
                 res.status(202).send({
                     success: true,
                     message: "Category Updated Successfully!",
@@ -79,6 +96,7 @@ module.exports = {
                 })
             }
         } catch (error) {
+            categoryLogger.error(`Error: ${error.message}`)
             res.status(500).send({
                 success: true,
                 message: "Error Occurs!",
@@ -92,12 +110,14 @@ module.exports = {
         try {
             const { categoryId } = req.params
             const deletedCategory = await categoryModel.findByIdAndDelete(categoryId)
+            categoryLogger.info("Category Deleted Successfully!")
             res.status(202).send({
                 success: true,
                 message: "Category Deleted Successfully!",
                 deletedCategory: deletedCategory
             })
         } catch (error) {
+            categoryLogger.error(`Error: ${error.message}`)
             res.status(500).send({
                 success: true,
                 message: "Error Occurs!",
@@ -112,17 +132,20 @@ module.exports = {
             const { userId } = req.params
             const allCategories = await categoryModel.find({ userId: userId }).select("categoryName categoryBalance")
             if (allCategories.length <= 0) {
+                categoryLogger.error("No Category Found!")
                 return res.status(404).send({
                     success: false,
                     message: "No Category Found!"
                 })
             }
+            categoryLogger.info("All Categories!")
             res.status(202).send({
                 success: true,
                 message: "All Categories",
                 allCategories: allCategories
             })
         } catch (error) {
+            categoryLogger.error(`Error: ${error.message}`)
             res.status(500).send({
                 success: true,
                 message: "Error Occurs!",
@@ -136,12 +159,14 @@ module.exports = {
         try {
             const { categoryId } = req.params
             const categoryData = await categoryModel.findById(categoryId)
+            categoryLogger.info("Category Data!")
             res.status(202).send({
                 success: true,
                 message: "Category Data!",
                 categoryData: categoryData
             })
         } catch (error) {
+            categoryLogger.error(`Error: ${error.message}`)
             res.status(500).send({
                 success: true,
                 message: "Error Occurs!",
