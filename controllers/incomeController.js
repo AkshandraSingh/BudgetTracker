@@ -91,7 +91,7 @@ module.exports = {
         }
     },
 
-    //? View Income Sources 🚀
+    //? View Income Sources API 🚀
     viewIncomeSources: async (req, res) => {
         try {
             const { userId } = req.params
@@ -101,6 +101,34 @@ module.exports = {
                 success: true,
                 message: "Income Sources Fetched Successfully!",
                 incomeSources: incomeSources
+            })
+        } catch (error) {
+            incomeLogger.error(`Error: ${error.message}`)
+            res.status(500).send({
+                success: true,
+                message: "Error Occurs!",
+                error: error.message,
+            })
+        }
+    },
+
+    //? Search Income API 🔎
+    searchIncome: async (req, res) => {
+        try {
+            const { incomeSource } = req.params
+            const searchData = await incomeModel.find({ incomeSource: { $regex: `^${incomeSource}`, $options: "i" } })
+            if (searchData.length <= 0) {
+                incomeLogger.error("No Income Found in Search!")
+                return res.status(404).send({
+                    success: false,
+                    message: "No Income Found in Search!"
+                })
+            }
+            incomeLogger.info("Income Searched Successfully!")
+            res.status(202).send({
+                success: true,
+                message: "Income Searched Successfully!",
+                searchData: searchData
             })
         } catch (error) {
             incomeLogger.error(`Error: ${error.message}`)
