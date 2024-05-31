@@ -27,6 +27,7 @@ module.exports = {
                 incomeData: incomeData,
             })
         } catch (error) {
+            incomeLogger.error(`Server Error: ${error.message}`)
             res.status(500).send({
                 success: true,
                 message: "Error Occurs!",
@@ -58,6 +59,27 @@ module.exports = {
                 success: true,
                 message: "Income Updated Successfully!",
                 editedIncome: editedIncome
+            })
+        } catch (error) {
+            incomeLogger.error(`Error: ${error.message}`)
+            res.status(500).send({
+                success: true,
+                message: "Error Occurs!",
+                error: error.message,
+            })
+        }
+    },
+
+    //? Delete Income API 🗑
+    deleteIncome: async (req, res) => {
+        try {
+            const { incomeId } = req.params
+            const deletedIncome = await incomeModel.findByIdAndDelete(incomeId)
+            incomeLogger.info("Income Deleted Successfully!")
+            res.status(202).send({
+                success: true,
+                message: "Income Deleted Successfully!",
+                deletedIncome: deletedIncome
             })
         } catch (error) {
             incomeLogger.error(`Error: ${error.message}`)
