@@ -34,4 +34,38 @@ module.exports = {
             })
         }
     },
+
+    //? Update Income API 👀
+    updateIncome: async (req, res) => {
+        try {
+            const { incomeId } = req.params
+            const incomeData = await incomeModel.findById(incomeId)
+            const realIncomeSource = incomeData.incomeSource.toLowerCase()
+            if (realIncomeSource === req.body.incomeSource.toLowerCase()) {
+                incomeLogger.error('Income already exist!')
+                return res.status(400).send({
+                    success: false,
+                    message: "This name income is already exist!"
+                })
+            }
+            const editedIncome = await incomeModel.findByIdAndUpdate(
+                incomeId,
+                req.body,
+                { new: true }
+            )
+            incomeLogger.info("Income Updated Successfully!")
+            res.status(202).send({
+                success: true,
+                message: "Income Updated Successfully!",
+                editedIncome: editedIncome
+            })
+        } catch (error) {
+            incomeLogger.error(`Error: ${error.message}`)
+            res.status(500).send({
+                success: true,
+                message: "Error Occurs!",
+                error: error.message,
+            })
+        }
+    },
 }
