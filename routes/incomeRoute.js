@@ -7,5 +7,6 @@ const incomeRouter = express.Router()
 incomeRouter.post('/createIncome/:userId', incomeController.createIncome)
 incomeRouter.patch('/updateIncome/:incomeId', incomeController.updateIncome)
 incomeRouter.delete('/deleteIncome/:incomeId', incomeController.deleteIncome)
+incomeRouter.get('/viewIncomeSources/:userId', incomeController.viewIncomeSources)
 
 module.exports = incomeRouter

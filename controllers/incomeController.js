@@ -90,4 +90,25 @@ module.exports = {
             })
         }
     },
+
+    //? View Income Sources 🚀
+    viewIncomeSources: async (req, res) => {
+        try {
+            const { userId } = req.params
+            const incomeSources = await incomeModel.find({ userId: userId })
+            incomeLogger.info("Income Sources Fetched Successfully!")
+            res.status(202).send({
+                success: true,
+                message: "Income Sources Fetched Successfully!",
+                incomeSources: incomeSources
+            })
+        } catch (error) {
+            incomeLogger.error(`Error: ${error.message}`)
+            res.status(500).send({
+                success: true,
+                message: "Error Occurs!",
+                error: error.message,
+            })
+        }
+    },
 }
