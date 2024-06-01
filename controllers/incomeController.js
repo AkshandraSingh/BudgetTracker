@@ -139,4 +139,34 @@ module.exports = {
             })
         }
     },
+
+    //? All Income Sources ✨
+    listIncomeSources: async (req, res) => {
+        try {
+            const { userId } = req.params
+            const listIncomeSource = await incomeModel.find({
+                userId: userId
+            })
+            if (listIncomeSource.length <= 0) {
+                incomeLogger.error("No Income Found!")
+                return res.status(404).send({
+                    success: false,
+                    message: "No Income Found!"
+                })
+            }
+            incomeLogger.info("All Income Sources!")
+            res.status(202).send({
+                success: true,
+                message: "All Income Sources",
+                allIncomeSources: listIncomeSource
+            })
+        } catch (error) {
+            incomeLogger.error(`Error: ${error.message}`)
+            res.status(500).send({
+                success: true,
+                message: "Error Occurs!",
+                error: error.message,
+            })
+        }
+    },
 }
