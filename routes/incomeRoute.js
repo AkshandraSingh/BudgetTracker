@@ -8,7 +8,7 @@ incomeRouter.post('/createIncome/:userId', incomeController.createIncome)
 incomeRouter.patch('/updateIncome/:incomeId', incomeController.updateIncome)
 incomeRouter.delete('/deleteIncome/:incomeId', incomeController.deleteIncome)
 incomeRouter.get('/viewIncomeSources/:userId', incomeController.viewIncomeSources)
-incomeRouter.get('/searchIncome/:incomeSource', incomeController.searchIncome)
+incomeRouter.get('/searchIncome/:userId/:incomeSource', incomeController.searchIncome)
 incomeRouter.get('/listIncomeSources/:userId', incomeController.listIncomeSources)
 
 module.exports = incomeRouter

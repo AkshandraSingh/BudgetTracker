@@ -10,5 +10,6 @@ categoryRouter.patch('/editCategory/:categoryId', categoryController.editCategor
 categoryRouter.delete('/deleteCategory/:categoryId', categoryController.deleteCategory)
 categoryRouter.get('/viewAllCategories/:userId', categoryController.viewAllCategories)
 categoryRouter.get('/viewCategory/:categoryId', categoryController.viewCategory)
+categoryRouter.get('/searchCategory/:userId/:categoryName', categoryController.searchCategory)
 
 module.exports = categoryRouter

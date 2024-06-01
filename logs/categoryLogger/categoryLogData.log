@@ -2,3 +2,7 @@ level info: May-29-2024 11:55:46 	All Categories!
 level info: May-29-2024 11:55:53 	All Categories!
 level info: May-29-2024 11:55:59 	Category Data!
 level info: May-29-2024 14:01:10 	Category Created Successfully!
+level info: Jun-01-2024 11:34:23 	Search Category!
+level info: Jun-01-2024 11:35:30 	Search Category!
+level error: Jun-01-2024 11:35:53 	Error: Cast to ObjectId failed for value "664513e326f2937c47e82d6e9" (type string) at path "userId" for model "category"
+level error: Jun-01-2024 11:35:59 	Error: Cast to ObjectId failed for value "664513e326f2937c47e82e9" (type string) at path "userId" for model "category"

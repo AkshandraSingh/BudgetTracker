@@ -174,4 +174,38 @@ module.exports = {
             })
         }
     },
+
+    //? Search Category API 💡
+    searchCategory: async (req, res) => {
+        try {
+            const { userId, categoryName } = req.params
+            const searchCategory = await categoryModel.find({
+                userId: userId,
+                categoryName: {
+                    $regex: categoryName,
+                    $options: "i"
+                }
+            }).select("categoryName categoryBalance")
+            if (searchCategory.length <= 0) {
+                categoryLogger.error("No Category Found!")
+                return res.status(404).send({
+                    success: false,
+                    message: "No Category Found!"
+                })
+            }
+            categoryLogger.info("Search Category!")
+            res.status(202).send({
+                success: true,
+                message: "Search Category!",
+                searchCategory: searchCategory
+            })
+        } catch (error) {
+            categoryLogger.error(`Error: ${error.message}`)
+            res.status(500).send({
+                success: true,
+                message: "Error Occurs!",
+                error: error.message,
+            })
+        }
+    }
 }

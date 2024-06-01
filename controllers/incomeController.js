@@ -115,8 +115,14 @@ module.exports = {
     //? Search Income API 🔎
     searchIncome: async (req, res) => {
         try {
-            const { incomeSource } = req.params
-            const searchData = await incomeModel.find({ incomeSource: { $regex: `^${incomeSource}`, $options: "i" } })
+            const { userId, incomeSource } = req.params
+            const searchData = await incomeModel.find({
+                userId: userId,
+                categoryName: {
+                    $regex: incomeSource,
+                    $options: "i"
+                }
+            })
             if (searchData.length <= 0) {
                 incomeLogger.error("No Income Found in Search!")
                 return res.status(404).send({
